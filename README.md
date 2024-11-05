@@ -1,6 +1,6 @@
 ## 실행하기 전에
 
-해당 프로젝트는 h2 가 아닌 mySQL 을 사용하므로 mySQL이 실행중이어야 작동합니다.
+mySQL 을 사용하므로 mySQL이 실행중이어야 작동합니다.  
 application.properties 의 database 변수들에 맞추어 mySQL 의 DB 를 생성해주세요.
 ```
 spring.datasource.url=jdbc:mysql://localhost:3306/shop
