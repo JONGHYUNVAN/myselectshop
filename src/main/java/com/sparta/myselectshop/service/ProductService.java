@@ -4,10 +4,10 @@ import com.sparta.myselectshop.dto.PaginationDto;
 import com.sparta.myselectshop.dto.ProductMyPriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
-import com.sparta.myselectshop.entity.Product;
-import com.sparta.myselectshop.entity.User;
-import com.sparta.myselectshop.entity.UserRoleEnum;
+import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.naver.dto.ItemDto;
+import com.sparta.myselectshop.repository.FolderRepository;
+import com.sparta.myselectshop.repository.ProductFolderRepository;
 import com.sparta.myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,11 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository repository;
+    private final FolderRepository folderRepository;
+    private final ProductFolderRepository productFolderRepository;
 
     public static final int MIN_MY_PRICE = 100;
 
@@ -80,5 +83,37 @@ public class ProductService {
         }
 
         return productResponseDtoList;
+    }
+
+    public void addFolder(Long productId, Long folderId, User user) {
+        Product product = repository.findById(productId).orElseThrow(()-> new NullPointerException("product not found"));
+        Folder folder = folderRepository.findById(folderId).orElseThrow(()-> new NullPointerException("folder not found"));
+        if(!product.getUser().getId().equals(user.getId())
+        || !folder.getUser().getId().equals(product.getUser().getId())
+        ){
+            throw new IllegalArgumentException("Not user's product or folder");
+        }
+        Optional<ProductFolder> overlapFolder = productFolderRepository.findByProductAndFolder(product,folder);
+        if(overlapFolder.isPresent()) throw new IllegalArgumentException("Overlapped folder");
+
+        productFolderRepository.save(new ProductFolder(product,folder));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getProductsInFolder(User user, Long folderId, PaginationDto paginationDto) {
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new NullPointerException("folder not found"));
+
+        if (!folder.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Not user's folder");
+        }
+
+        Sort.Direction direction = paginationDto.getIsAsc() ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, paginationDto.getSortBy());
+        Pageable pageable = PageRequest.of(paginationDto.getPage() - 1, paginationDto.getSize(), sort);
+
+        Page<Product> productsInFolder = repository.findAllByUserAndProductFolderList_FolderId(user,folderId, pageable);
+
+        return productsInFolder.map(ProductResponseDto::new);
     }
 }

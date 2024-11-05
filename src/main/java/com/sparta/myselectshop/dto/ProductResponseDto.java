@@ -31,7 +31,7 @@ public class ProductResponseDto {
         this.image = product.getImage();
         this.lprice = product.getLprice();
         this.myPrice = product.getMyPrice();
-        for(ProductFolder productFolder: product.getFolderResponseDtoList()){
+        for(ProductFolder productFolder: product.getProductFolderList()){
             folderResponseDtoList.add(new FolderResponseDto(productFolder.getFolder()));
         }
     }

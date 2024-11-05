@@ -13,25 +13,38 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/products")
+@RequestMapping("/api")
 public class ProductController {
 
     private final ProductService service;
 
-    @PostMapping()
+    @PostMapping("/products")
     public ProductResponseDto create(@RequestBody ProductRequestDto productRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.create(productRequestDto, userDetails.getUser());
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/products/{productId}/folder")
+    public void addFolder(@PathVariable Long productId, @RequestParam Long folderId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        service.addFolder(productId,folderId,userDetails.getUser());
+    }
+
+    @PutMapping("/products/{id}")
     public ProductResponseDto update(@PathVariable Long id, @RequestBody ProductMyPriceRequestDto productMyPriceRequestDto) {
         return service.update(id, productMyPriceRequestDto);
     }
 
-    @GetMapping
+    @GetMapping("products")
     public Page<ProductResponseDto> getProducts(
             @ModelAttribute PaginationDto paginationDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.getProducts(userDetails.getUser(), paginationDto);
+    }
+
+    @GetMapping("/folders/{folderId}/products")
+    public Page<ProductResponseDto> getProductsInFolder(
+            @ModelAttribute PaginationDto paginationDto,
+            @PathVariable Long folderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.getProductsInFolder(userDetails.getUser(),folderId, paginationDto);
     }
 }
