@@ -30,7 +30,7 @@ $(document).ready(function () {
             $('#username').text(username);
             if (isAdmin) {
                 $('#admin').text(true);
-                showProduct(true);
+                showProduct();
             } else {
                 showProduct();
             }
@@ -157,7 +157,7 @@ function addProduct(itemDto) {
     });
 }
 
-function showProduct(isAdmin = false) {
+function showProduct() {
     /**
      * 관심상품 목록: #product-container
      * 검색결과 목록: #search-result-box
@@ -166,31 +166,42 @@ function showProduct(isAdmin = false) {
 
     let dataSource = null;
 
-    // admin 계정
-    if (isAdmin) {
-        dataSource = `/api/admin/products`;
-    } else {
-        dataSource = `/api/products`;
-    }
+    var sorting = $("#sorting option:selected").val();
+    var isAsc = $(':radio[name="isAsc"]:checked').val();
 
-    $.ajax({
-        type: 'GET',
-        url: dataSource,
-        contentType: 'application/json',
-        success: function (response) {
+    dataSource = `/api/products?sortBy=${sorting}&isAsc=${isAsc}`;
+
+    $('#product-container').empty();
+    $('#search-result-box').empty();
+    $('#pagination').pagination({
+        dataSource,
+        locator: 'content',
+        alias: {
+            pageNumber: 'page',
+            pageSize: 'size'
+        },
+        totalNumberLocator: (response) => {
+            return response.totalElements;
+        },
+        pageSize: 10,
+        showPrevious: true,
+        showNext: true,
+        ajax: {
+            error(error, status, request) {
+                if (error.status === 403) {
+                    $('html').html(error.responseText);
+                    return;
+                }
+                logout();
+            }
+        },
+        callback: function(response, pagination) {
             $('#product-container').empty();
             for (let i = 0; i < response.length; i++) {
                 let product = response[i];
                 let tempHtml = addProductItem(product);
                 $('#product-container').append(tempHtml);
             }
-        },
-        error(error, status, request) {
-            if (error.status === 403) {
-                $('html').html(error.responseText);
-                return;
-            }
-            logout();
         }
     });
 }
@@ -210,7 +221,7 @@ function addProductItem(product) {
                         <div class="lprice">
                             <span>${numberWithCommas(product.lprice)}</span>원
                         </div>
-                        <div class="isgood ${product.lprice > product.myPrice ? 'none' : ''}">
+                        <div class="isgood ${product.lprice > product.myprice ? 'none' : ''}">
                             최저가
                         </div>
                     </div>
@@ -220,20 +231,20 @@ function addProductItem(product) {
 
 function setMyprice() {
     /**
-     * 1. id가 myPrice 인 input 태그에서 값을 가져온다.
+     * 1. id가 myprice 인 input 태그에서 값을 가져온다.
      * 2. 만약 값을 입력하지 않았으면 alert를 띄우고 중단한다.
      * 3. PUT /api/product/${targetId} 에 data를 전달한다.
      *    주의) contentType: "application/json",
-     *         data: JSON.stringify({myPrice: myPrice}),
+     *         data: JSON.stringify({myprice: myprice}),
      *         빠뜨리지 말 것!
      * 4. 모달을 종료한다. $('#container').removeClass('active');
      * 5, 성공적으로 등록되었음을 알리는 alert를 띄운다.
      * 6. 창을 새로고침한다. window.location.reload();
      */
-        // 1. id가 myPrice 인 input 태그에서 값을 가져온다.
-    let myPrice = $('#myPrice').val();
+        // 1. id가 myprice 인 input 태그에서 값을 가져온다.
+    let myprice = $('#myprice').val();
     // 2. 만약 값을 입력하지 않았으면 alert를 띄우고 중단한다.
-    if (myPrice == '') {
+    if (myprice == '') {
         alert('올바른 가격을 입력해주세요');
         return;
     }
@@ -243,7 +254,7 @@ function setMyprice() {
         type: 'PUT',
         url: `/api/products/${targetId}`,
         contentType: 'application/json',
-        data: JSON.stringify({myPrice: myPrice}),
+        data: JSON.stringify({myprice: myprice}),
         success: function (response) {
 
             // 4. 모달을 종료한다. $('#container').removeClass('active');
@@ -268,7 +279,7 @@ function logout() {
 function getToken() {
     let auth = Cookies.get('Authorization');
 
-    if (auth === undefined) {
+    if(auth === undefined) {
         return '';
     }
 

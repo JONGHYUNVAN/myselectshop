@@ -1,5 +1,6 @@
 package com.sparta.myselectshop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sparta.myselectshop.dto.ProductMyPriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.naver.dto.ItemDto;
@@ -29,20 +30,21 @@ public class Product extends Timestamped {
     private String link;
 
     @Column(nullable = false)
-    private int lPrice;
+    private int lprice;
 
     @Column(nullable = false)
     private int myPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
     public Product(ProductRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.image = requestDto.getImage();
         this.link = requestDto.getLink();
-        this.lPrice = requestDto.getLprice();
+        this.lprice = requestDto.getLprice();
         this.user = user;
     }
 
@@ -51,6 +53,6 @@ public class Product extends Timestamped {
     }
 
     public void updateByItemDto(ItemDto itemDto) {
-        this.lPrice = itemDto.getLprice();
+        this.lprice = itemDto.getLprice();
     }
 }

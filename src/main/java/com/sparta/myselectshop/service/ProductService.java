@@ -1,14 +1,20 @@
 package com.sparta.myselectshop.service;
 
+import com.sparta.myselectshop.dto.PaginationDto;
 import com.sparta.myselectshop.dto.ProductMyPriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
 import com.sparta.myselectshop.entity.User;
+import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,16 +44,24 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getProducts(User user) {
-        List<Product> productList = repository.findAllByUser(user);
-        List<ProductResponseDto> productResponseDtoList = new ArrayList<>();
+    public Page<Product> getProducts(User user, PaginationDto paginationDto) {
+        Sort.Direction direction = paginationDto.getIsAsc() ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, paginationDto.getSortBy());
+        Pageable pageable = PageRequest.of(paginationDto.getPage() - 1, paginationDto.getSize(), sort);
 
-        for(Product product : productList){
-            productResponseDtoList.add(new ProductResponseDto(product));
+        UserRoleEnum userRoleEnum = user.getRole();
+        Page<Product> productList;
+
+        if (userRoleEnum == UserRoleEnum.USER) {
+            productList = repository.findAllByUser(user, pageable);
+        } else {
+            productList = repository.findAll(pageable);
         }
 
-        return productResponseDtoList;
+        return productList;
     }
+
+
 
     @Transactional
     public void updateBySearch(Long id, ItemDto itemDto) {
