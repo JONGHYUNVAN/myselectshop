@@ -1,4 +1,4 @@
-package com.sparta.myselectshop.jwt;
+package com.sparta.myselectshop.security.jwt;
 
 import com.sparta.myselectshop.entity.UserRoleEnum;
 import io.jsonwebtoken.*;

@@ -1,6 +1,6 @@
 package com.sparta.myselectshop.security;
 
-import com.sparta.myselectshop.jwt.JwtUtil;
+import com.sparta.myselectshop.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

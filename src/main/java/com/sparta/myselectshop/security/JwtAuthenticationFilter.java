@@ -3,7 +3,7 @@ package com.sparta.myselectshop.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.myselectshop.dto.LoginRequestDto;
 import com.sparta.myselectshop.entity.UserRoleEnum;
-import com.sparta.myselectshop.jwt.JwtUtil;
+import com.sparta.myselectshop.security.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

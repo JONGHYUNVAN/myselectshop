@@ -4,7 +4,6 @@ import com.sparta.myselectshop.dto.ProductMyPriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.dto.PaginationDto;
-import com.sparta.myselectshop.entity.Product;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<Product> getProducts(
+    public Page<ProductResponseDto> getProducts(
             @ModelAttribute PaginationDto paginationDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.getProducts(userDetails.getUser(), paginationDto);

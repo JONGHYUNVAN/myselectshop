@@ -1,7 +1,7 @@
 package com.sparta.myselectshop.config;
 
 
-import com.sparta.myselectshop.jwt.JwtUtil;
+import com.sparta.myselectshop.security.jwt.JwtUtil;
 import com.sparta.myselectshop.security.JwtAuthenticationFilter;
 import com.sparta.myselectshop.security.JwtAuthorizationFilter;
 import com.sparta.myselectshop.security.UserDetailsServiceImpl;

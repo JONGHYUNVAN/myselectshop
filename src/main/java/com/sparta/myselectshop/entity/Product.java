@@ -38,13 +38,13 @@ public class Product extends Timestamped {
     @Column(nullable = false)
     private int myPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductFolder> productFolderList = new ArrayList<>();
+    private List<ProductFolder> folderResponseDtoList = new ArrayList<>();
 
     public Product(ProductRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();

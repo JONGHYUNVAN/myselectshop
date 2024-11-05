@@ -9,13 +9,13 @@ import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,9 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public Page<Product> getProducts(User user, PaginationDto paginationDto) {
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getProducts(User user, PaginationDto paginationDto) {
         Sort.Direction direction = paginationDto.getIsAsc() ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, paginationDto.getSortBy());
         Pageable pageable = PageRequest.of(paginationDto.getPage() - 1, paginationDto.getSize(), sort);
@@ -58,7 +60,7 @@ public class ProductService {
             productList = repository.findAll(pageable);
         }
 
-        return productList;
+        return productList.map(ProductResponseDto::new);
     }
 
 
