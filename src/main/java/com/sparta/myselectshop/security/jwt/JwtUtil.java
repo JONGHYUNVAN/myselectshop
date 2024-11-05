@@ -1,6 +1,6 @@
 package com.sparta.myselectshop.security.jwt;
 
-import com.sparta.myselectshop.entity.UserRoleEnum;
+import com.sparta.myselectshop.util.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;

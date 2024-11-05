@@ -1,7 +1,7 @@
 package com.sparta.myselectshop.security;
 
-import com.sparta.myselectshop.entity.User;
-import com.sparta.myselectshop.entity.UserRoleEnum;
+import com.sparta.myselectshop.user.entity.User;
+import com.sparta.myselectshop.util.entity.UserRoleEnum;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

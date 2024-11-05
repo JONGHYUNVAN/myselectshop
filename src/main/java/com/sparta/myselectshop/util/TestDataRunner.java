@@ -1,15 +1,14 @@
 package com.sparta.myselectshop.util;
 
-import com.sparta.myselectshop.entity.Product;
-import com.sparta.myselectshop.entity.User;
-import com.sparta.myselectshop.entity.UserRoleEnum;
+import com.sparta.myselectshop.product.entity.Product;
+import com.sparta.myselectshop.user.entity.User;
+import com.sparta.myselectshop.util.entity.UserRoleEnum;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.naver.service.NaverApiService;
-import com.sparta.myselectshop.repository.ProductRepository;
-import com.sparta.myselectshop.repository.UserRepository;
-import com.sparta.myselectshop.service.UserService;
+import com.sparta.myselectshop.product.repository.ProductRepository;
+import com.sparta.myselectshop.user.repository.UserRepository;
+import com.sparta.myselectshop.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.myselectshop.service.ProductService.MIN_MY_PRICE;
+import static com.sparta.myselectshop.product.service.ProductService.MIN_MY_PRICE;
 
 @Component
 @RequiredArgsConstructor

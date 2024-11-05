@@ -1,7 +1,7 @@
 package com.sparta.myselectshop.security;
 
-import com.sparta.myselectshop.entity.User;
-import com.sparta.myselectshop.repository.UserRepository;
+import com.sparta.myselectshop.user.entity.User;
+import com.sparta.myselectshop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
